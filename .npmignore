@@ -1,0 +1,8 @@
+.github/
+.gitignore
+index.html
+test.js
+package_review.md
+CVS/
+.DS_Store
+*.log

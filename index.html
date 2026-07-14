@@ -3,12 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>vSignature</title>
+    <title>vSignature - Modern Digital Signature Capture</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --background: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            align-content: center;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(12px);
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            color: var(--text-muted);
+            margin: 0 0 24px 0;
+            font-size: 15px;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+            margin-bottom: 24px;
+        }
+        button {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+        button:hover {
+            background-color: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        button.save {
+            background-color: var(--primary);
+            border-color: transparent;
+        }
+        button.save:hover {
+            background-color: var(--primary-hover);
+        }
+        button.clear {
+            border-color: rgba(239, 68, 68, 0.4);
+            color: #f87171;
+        }
+        button.clear:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+        }
+        .preview-box {
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 16px;
+        }
+        .preview-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .data-preview {
+            font-family: monospace;
+            font-size: 11px;
+            color: #34d399;
+            word-break: break-all;
+            white-space: pre-wrap;
+            max-height: 80px;
+            overflow-y: auto;
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
-    <input type="hidden" class="signature">
-    <button class="clear">Clear</button>
-    <button>Save</button>
+    <div class="container">
+        <h1>vSignature</h1>
+        <div class="subtitle">Interactive modern virtual signature playground. Draw with your mouse, finger, or stylus.</div>
+        
+        <input type="hidden" class="signature">
+        
+        <div class="controls">
+            <button class="undo">Undo</button>
+            <button class="redo">Redo</button>
+            <button class="clear">Clear</button>
+            <button class="save">PNG</button>
+            <button class="save-jpg">JPEG</button>
+            <button class="save-svg">SVG</button>
+        </div>
+
+        <div class="preview-box">
+            <div class="preview-title">Real-time Data Output</div>
+            <pre class="data-preview">No signature data...</pre>
+        </div>
+    </div>
+
     <script type="module" src="./test.js"></script>
 </body>
 </html>
