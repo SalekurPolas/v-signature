@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vSignature - API Documentation & Integration Guide</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Official documentation and integration guide for vSignature. Learn how to configure canvas signature pads, brush styles, guidelines, watermarks, and cropped image exports.">
+    <meta name="keywords" content="vSignature, signature pad, html5 canvas signature, javascript signature pad, canvas capture library, signature library, web signature, vanilla js signature, digital signature api">
+    <meta name="robots" content="index, follow">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --background: #0f172a;
+            --sidebar-bg: #1e293b;
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --code-bg: rgba(15, 23, 42, 0.8);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+            line-height: 1.6;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .docs-layout {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            flex-direction: column;
+        }
+
+        /* Top Header Navigation */
+        .top-header {
+            height: 56px;
+            min-height: 56px;
+            background-color: var(--sidebar-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 10;
+        }
+
+        .logo-area h1 {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-to-sandbox {
+            background-color: var(--primary);
+            border: none;
+            color: var(--text-main);
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .back-to-sandbox:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* Documentation Wrapper */
+        .docs-body {
+            display: flex;
+            flex-grow: 1;
+            height: calc(100vh - 56px);
+            overflow: hidden;
+        }
+
+        /* Navigation Side Panel */
+        .docs-nav {
+            width: 250px;
+            min-width: 250px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 16px;
+            gap: 16px;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+
+        .docs-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-section-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .nav-link {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s ease;
+            display: block;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .nav-link:hover {
+            color: var(--text-main);
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .nav-link.active {
+            color: var(--text-main);
+            background-color: rgba(99, 102, 241, 0.15);
+            font-weight: 600;
+        }
+
+        /* Main Content Panel */
+        .docs-content {
+            flex-grow: 1;
+            padding: 40px 60px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .section-container {
+            max-width: 840px;
+            margin: 0 auto 60px auto;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 24px 0 12px 0;
+            color: #a5b4fc;
+        }
+
+        p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        /* Code Blocks styling */
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            color: #818cf8;
+        }
+
+        pre code {
+            color: #cbd5e1;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            font-size: 13px;
+        }
+
+        th, td {
+            border: 1px solid var(--card-border);
+            padding: 10px 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: rgba(255, 255, 255, 0.02);
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        td {
+            color: var(--text-muted);
+        }
+
+        td code {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .docs-body {
+                flex-direction: column;
+            }
+            .docs-nav {
+                width: 100%;
+                height: 180px;
+                min-height: 180px;
+                border-right: none;
+                border-bottom: 1px solid var(--card-border);
+                padding: 16px;
+            }
+            .docs-content {
+                padding: 24px 16px;
+            }
+        }
+
+        pre {
+            position: relative;
+        }
+
+        .code-copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+            border-radius: 4px;
+            padding: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            opacity: 0;
+        }
+
+        pre:hover .code-copy-btn {
+            opacity: 1;
+        }
+
+        .code-copy-btn:hover {
+            background-color: rgba(255, 255, 255, 0.12);
+            color: var(--text-main);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="docs-layout">
+        <!-- Top Header Navigation -->
+        <header class="top-header">
+            <div class="logo-area">
+                <h1>vSignature Documentation</h1>
+            </div>
+            <a href="/" class="back-to-sandbox">Playground</a>
+        </header>
+
+        <!-- Documentation Body -->
+        <div class="docs-body">
+            <!-- Navigation Links -->
+            <nav class="docs-nav">
+                <div class="nav-section-title">Getting Started</div>
+                <ul class="nav-list">
+                    <li><a href="#intro" class="nav-link active">Introduction</a></li>
+                    <li><a href="#installation" class="nav-link">Installation</a></li>
+                    <li><a href="#quickstart" class="nav-link">Quick Start</a></li>
+                </ul>
+
+                <div class="nav-section-title">Configuration</div>
+                <ul class="nav-list">
+                    <li><a href="#core-options" class="nav-link">Core Parameters</a></li>
+                    <li><a href="#presets" class="nav-link">Pen Brush Presets</a></li>
+                    <li><a href="#watermark-guides" class="nav-link">Watermarks & Guides</a></li>
+                </ul>
+
+                <div class="nav-section-title">API Reference</div>
+                <ul class="nav-list">
+                    <li><a href="#methods" class="nav-link">Public Methods</a></li>
+                    <li><a href="#events" class="nav-link">Callbacks & Events</a></li>
+                    <li><a href="#license" class="nav-link">License</a></li>
+                </ul>
+            </nav>
+
+            <!-- Scrollable Content Panel -->
+            <main class="docs-content">
+                <!-- Introduction -->
+                <section id="intro" class="section-container">
+                    <h2>Introduction</h2>
+                    <p>
+                        <strong>vSignature</strong> is a premium, lightweight vanilla JavaScript library built to capture, render, and export high-fidelity hand-drawn signatures on HTML5 canvas elements. 
+                        It contains vector physics to calculate brush thickness variations dynamically relative to drawing velocity, simulating realistic drawing instruments (e.g. fountain pens, quills, brushes).
+                    </p>
+                    <p>
+                        The library is fully responsive, dependency-free, and designed to work cleanly inside any framework environment (Laravel, React, Vue, Angular, Node, etc.).
+                    </p>
+                </section>
+
+                <!-- Installation -->
+                <section id="installation" class="section-container">
+                    <h2>Installation</h2>
+                    <p>Install the library into your project dependency manager using npm:</p>
+                    <pre><code>npm install v-signature</code></pre>
+                    
+                    <h3>Importing Options</h3>
+                    <p>Import the ES Module class directly inside your script bundles:</p>
+                    <pre><code>import { VSignature } from 'v-signature';</code></pre>
+                    
+                    <p>Or load using standard CommonJS modular requires:</p>
+                    <pre><code>const { VSignature } = require('v-signature');</code></pre>
+                </section>
+
+                <!-- Quick Start -->
+                <section id="quickstart" class="section-container">
+                    <h2>Quick Start</h2>
+                    <p>Create a hidden HTML input field where the base64 signature images will be automatically stored during capture:</p>
+                    <pre><code>&lt;input type="hidden" id="signature-data" class="signature"&gt;</code></pre>
+                    
+                    <p>Initialize the signature capture pad using Javascript:</p>
+                    <pre><code>document.addEventListener('DOMContentLoaded', () => {
+    // initialize by passing target input id
+    const signature = new VSignature('signature-data');
+});</code></pre>
+                </section>
+
+                <!-- Core Parameters -->
+                <section id="core-options" class="section-container">
+                    <h2>Core Parameters</h2>
+                    <p>You can customize the appearance, dimensions, and drawing behaviors by passing configuration parameters in the initialization options:</p>
+                    
+                    <pre><code>const signature = new VSignature('signature-data', {
+    options: {
+        width: '100%',
+        height: '350px',
+        backgroundColor: '#ffffff',
+        border: '1px dashed #cccccc',
+        borderRadius: '8px',
+        disabled: false
+    }
+});</code></pre>
+
+                    <h3>Options Properties Table</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Option Key</th>
+                                <th>Type</th>
+                                <th>Default Value</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>width</code></td>
+                                <td><code>string</code></td>
+                                <td><code>'100%'</code></td>
+                                <td>width dimension of the canvas signature pad.</td>
+                            </tr>
+                            <tr>
+                                <td><code>height</code></td>
+                                <td><code>string</code></td>
+                                <td><code>'300px'</code></td>
+                                <td>height dimension of the canvas signature pad.</td>
+                            </tr>
+                            <tr>
+                                <td><code>color</code></td>
+                                <td><code>string</code></td>
+                                <td><code>'#000000'</code></td>
+                                <td>hex or rgba styling value for drawn lines.</td>
+                            </tr>
+                            <tr>
+                                <td><code>backgroundColor</code></td>
+                                <td><code>string</code></td>
+                                <td><code>'#f2f2f2'</code></td>
+                                <td>background fill color of the canvas area.</td>
+                            </tr>
+                            <tr>
+                                <td><code>disabled</code></td>
+                                <td><code>boolean</code></td>
+                                <td><code>false</code></td>
+                                <td>set true to lock the canvas and disable drawing updates.</td>
+                            </tr>
+                            <tr>
+                                <td><code>lineJoin</code></td>
+                                <td><code>string</code></td>
+                                <td><code>'round'</code></td>
+                                <td>canvas line segment join parameter (round, bevel, miter).</td>
+                            </tr>
+                            <tr>
+                                <td><code>pen</code></td>
+                                <td><code>string</code></td>
+                                <td><code>'default'</code></td>
+                                <td>sets the pointer cursor shape (default, pen, feather, pencil, custom, or a custom image URL).</td>
+                            </tr>
+                            <tr>
+                                <td><code>opacity</code></td>
+                                <td><code>number</code></td>
+                                <td><code>1.0</code></td>
+                                <td>opacity/transparency level of stroke ink (0.1 to 1.0).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Pen Brush Presets -->
+                <section id="presets" class="section-container">
+                    <h2>Pen Brush Presets</h2>
+                    <p>vSignature supports 5 built-in drawing presets, as well as a fully custom configuration option to define your own dynamic physics:</p>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Preset Value</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>'fountain'</code></td>
+                                <td>velocity-sensitive line thickness mimicking an ink fountain pen.</td>
+                            </tr>
+                            <tr>
+                                <td><code>'quill'</code></td>
+                                <td>fading quill pen with dynamic width and trailing opacity fade-out.</td>
+                            </tr>
+                            <tr>
+                                <td><code>'gel'</code></td>
+                                <td>smooth, constant thickness ink line.</td>
+                            </tr>
+                            <tr>
+                                <td><code>'brush'</code></td>
+                                <td>thick calligraphic brush texture with subtle ink-shadow blur values.</td>
+                            </tr>
+                            <tr>
+                                <td><code>'highlighter'</code></td>
+                                <td>translucent, thick highlighter pen drawing style.</td>
+                            </tr>
+                            <tr>
+                                <td><code>'custom'</code></td>
+                                <td>allows manual specification of minWidth, maxWidth, and sensitivity.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Custom Physics Config</h3>
+                    <pre><code>const signature = new VSignature('signature-data', {
+    options: {
+        style: 'custom',
+        minWidth: 0.8,              // min thickness at high speeds
+        maxWidth: 4.5,              // max thickness at slow speeds
+        velocitySensitivity: 0.65   // intensity of velocity transitions
+    }
+});</code></pre>
+
+                    <h3>Custom Pen Cursor Example</h3>
+                    <p>You can customize the mouse cursor shape by providing a custom image URL (such as an ornate green feather quill pen):</p>
+                    <pre><code>const signature = new VSignature('signature-data', {
+    options: {
+        pen: 'https://png.pngtree.com/png-clipart/20250419/original/pngtree-ornate-green-feather-quill-pen-with-gold-detailing-isolated-png-image_20738981.png'
+    }
+});</code></pre>
+                </section>
+
+                <!-- Watermarks & Guidelines -->
+                <section id="watermark-guides" class="section-container">
+                    <h2>Watermarks & Guidelines</h2>
+                    <p>Draw background aids and copyright watermarks directly onto the signature pad at the vector level:</p>
+                    
+                    <pre><code>const signature = new VSignature('signature-data', {
+    options: {
+        // watermark settings
+        watermark: 'OFFICIAL USE ONLY',
+        watermarkColor: 'rgba(0, 0, 0, 0.05)',
+        watermarkFont: '24px sans-serif',
+        watermarkAngle: -45,
+
+        // guideline settings
+        guideLine: 'Dotted Guideline Title',
+        guideLineColor: 'rgba(0, 0, 0, 0.15)',
+        guideLineExport: false // do not burn guideline into image exports
+    }
+});</code></pre>
+                </section>
+
+                <!-- Public Methods -->
+                <section id="methods" class="section-container">
+                    <h2>Public Methods</h2>
+                    <p>Interact with the signature pad instance using standard programmatic API methods:</p>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Method Syntax</th>
+                                <th>Returns</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>init()</code></td>
+                                <td><code>void</code></td>
+                                <td>resolves canvas, buttons selectors, and binds pointer drawing event listeners.</td>
+                            </tr>
+                            <tr>
+                                <td><code>resize()</code></td>
+                                <td><code>void</code></td>
+                                <td>re-calculates canvas size mapping logic relative to Retina high-DPI scaling.</td>
+                            </tr>
+                            <tr>
+                                <td><code>clear()</code></td>
+                                <td><code>void</code></td>
+                                <td>erases all stroke data, resets guide lines, and clears data outputs.</td>
+                            </tr>
+                            <tr>
+                                <td><code>undo()</code></td>
+                                <td><code>void</code></td>
+                                <td>reverts the last captured stroke and redraws the canvas.</td>
+                            </tr>
+                            <tr>
+                                <td><code>redo()</code></td>
+                                <td><code>void</code></td>
+                                <td>restores the last reverted stroke and redraws the canvas.</td>
+                            </tr>
+                            <tr>
+                                <td><code>disable()</code></td>
+                                <td><code>void</code></td>
+                                <td>locks canvas interactions, ignoring any new pointer drawings.</td>
+                            </tr>
+                            <tr>
+                                <td><code>enable()</code></td>
+                                <td><code>void</code></td>
+                                <td>unlocks canvas interactions, accepting new pointer drawings.</td>
+                            </tr>
+                            <tr>
+                                <td><code>isEmpty()</code></td>
+                                <td><code>boolean</code></td>
+                                <td>returns <code>true</code> if canvas holds zero drawings.</td>
+                            </tr>
+                            <tr>
+                                <td><code>setPen(type)</code></td>
+                                <td><code>void</code></td>
+                                <td>updates cursor shapes (<code>'default'</code>, <code>'pen'</code>, <code>'feather'</code>, <code>'pencil'</code>, <code>'custom'</code>, or a custom image URL string).</td>
+                            </tr>
+                            <tr>
+                                <td><code>on(event, callback)</code></td>
+                                <td><code>void</code></td>
+                                <td>registers event callback (e.g. <code>'change'</code>, returning new base64 data stream).</td>
+                            </tr>
+                            <tr>
+                                <td><code>toData()</code></td>
+                                <td><code>Point[][]</code></td>
+                                <td>exports array logs containing raw coordinates and speed physics data.</td>
+                            </tr>
+                            <tr>
+                                <td><code>fromData(data)</code></td>
+                                <td><code>void</code></td>
+                                <td>imports and renders vector coordinates onto the canvas area.</td>
+                            </tr>
+                            <tr>
+                                <td><code>toPNG()</code></td>
+                                <td><code>string</code></td>
+                                <td>returns base64 PNG data URL containing the full canvas transparent signature.</td>
+                            </tr>
+                            <tr>
+                                <td><code>downloadPNG()</code></td>
+                                <td><code>void</code></td>
+                                <td>triggers browser download of the signature as a transparent PNG file.</td>
+                            </tr>
+                            <tr>
+                                <td><code>toJPEG()</code></td>
+                                <td><code>string</code></td>
+                                <td>returns base64 JPEG data URL containing the full canvas solid white-background signature.</td>
+                            </tr>
+                            <tr>
+                                <td><code>downloadJPEG()</code></td>
+                                <td><code>void</code></td>
+                                <td>triggers browser download of the signature as a solid white-background JPEG file.</td>
+                            </tr>
+                            <tr>
+                                <td><code>toSVG()</code></td>
+                                <td><code>string</code></td>
+                                <td>returns the raw inline vector XML <code>&lt;svg&gt;</code> element markup string.</td>
+                            </tr>
+                            <tr>
+                                <td><code>downloadSVG()</code></td>
+                                <td><code>void</code></td>
+                                <td>triggers browser download of the signature as a vector <code>.svg</code> file.</td>
+                            </tr>
+                            <tr>
+                                <td><code>toTrimmedPNG()</code></td>
+                                <td><code>string | null</code></td>
+                                <td>returns base64 PNG data URL cropped directly to the bounding boundaries of signature drawing.</td>
+                            </tr>
+                            <tr>
+                                <td><code>downloadTrimmedPNG()</code></td>
+                                <td><code>void</code></td>
+                                <td>crops signature drawing boundaries and triggers a browser download of a transparent <code>.png</code> file.</td>
+                            </tr>
+                            <tr>
+                                <td><code>toTrimmedJPEG()</code></td>
+                                <td><code>string | null</code></td>
+                                <td>returns base64 JPEG data URL cropped directly to the bounding boundaries of signature drawing on a solid white background.</td>
+                            </tr>
+                            <tr>
+                                <td><code>downloadTrimmedJPEG()</code></td>
+                                <td><code>void</code></td>
+                                <td>crops signature drawing boundaries and triggers a browser download of a solid white-background <code>.jpeg</code> file.</td>
+                            </tr>
+                            <tr>
+                                <td><code>toTrimmedSVG()</code></td>
+                                <td><code>string | null</code></td>
+                                <td>returns cropped vector XML <code>&lt;svg&gt;</code> element markup string using dynamic viewBox cropping.</td>
+                            </tr>
+                            <tr>
+                                <td><code>downloadTrimmedSVG()</code></td>
+                                <td><code>void</code></td>
+                                <td>crops signature drawing boundaries and triggers a browser download of a vector <code>.svg</code> file.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Callbacks & Events -->
+                <section id="events" class="section-container">
+                    <h2>Callbacks & Events</h2>
+                    <p>Bind to changes using the built-in programmatic event listeners:</p>
+                    <pre><code>// bind to change events
+signature.on('change', (base64Data) => {
+    if (base64Data) {
+        console.log('signature captured: ', base64Data);
+    } else {
+        console.log('signature cleared');
+    }
+});</code></pre>
+                </section>
+
+                <!-- License -->
+                <section id="license" class="section-container">
+                    <h2>License</h2>
+                    <p>Released under the standard MIT License. See the LICENSE file for details.</p>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Navigation Scrollspy Javascript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // add copy buttons to all code blocks
+            const preBlocks = document.querySelectorAll('pre');
+            preBlocks.forEach(pre => {
+                const btn = document.createElement('button');
+                btn.className = 'code-copy-btn';
+                btn.title = 'Copy code';
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+                
+                btn.addEventListener('click', () => {
+                    const code = pre.querySelector('code')?.innerText || '';
+                    navigator.clipboard.writeText(code).then(() => {
+                        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+                        setTimeout(() => {
+                            btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('failed to copy: ', err);
+                    });
+                });
+                
+                pre.appendChild(btn);
+            });
+
+            const links = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section-container');
+            const content = document.querySelector('.docs-content');
+
+            // handle navigation clicking
+            links.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                        
+                        // update active states
+                        links.forEach(l => l.classList.remove('active'));
+                        link.classList.add('active');
+                    }
+                });
+            });
+
+            // handle scrollspy activation
+            content.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    
+                    // offset scroll position check
+                    if (content.scrollTop >= sectionTop - 120) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                if (current) {
+                    links.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === '#' + current) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

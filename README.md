@@ -1,171 +1,229 @@
 # v-signature
 
-`v-signature` is a JavaScript library for capturing and managing digital signatures on an HTML canvas. It provides functionality to draw, clear, save, and configure signature settings.
+[![NPM Version](https://img.shields.io/npm/v/v-signature.svg?style=flat-square)](https://www.npmjs.com/package/v-signature)
+[![NPM Downloads](https://img.shields.io/npm/dm/v-signature.svg?style=flat-square)](https://www.npmjs.com/package/v-signature)
+[![License](https://img.shields.io/npm/l/v-signature.svg?style=flat-square)](https://github.com/SalekurPolas/v-signature/blob/master/LICENSE)
+
+> 🌐 **[Live Demo / Interactive Playground Studio](https://salekurpolas.github.io/vsignature)**
+
+`v-signature` is an ultra-lightweight, responsive HTML5 canvas signature pad library written in pure vanilla JavaScript. Capture smooth, high-fidelity digital signatures using dynamic calligraphy brush dynamics, custom text watermarks, baseline signing guidelines, and export them instantly to vector SVG, JPEG, PNG, or whitespace-trimmed signature images.
+
+Designed for seamless integration into Laravel, React, Vue, Angular, Node, and vanilla web applications.
+
+---
+
+## Key Features
+
+* 🚀 **Zero Dependencies**: Lightweight vanilla JavaScript capture engine.
+* 🖋️ **Premium Brush Presets**: built-in Fountain, Feather Quill, Gel, Calligraphy Brush, and Highlighter pen presets.
+* 📈 **Dynamic Physics**: Velocity-sensitive line width calculations for expressive drawing.
+* 📐 **Baseline Guideline Layer**: Dotted signature helper line with titles (can be omitted on export).
+* 🏢 **Watermark Support**: Draw transparent text watermarks rotated behind drawings.
+* 🖱️ **Custom Pointer Cursors**: Self-contained SVG pointers (fountain pen, quill, pencil) that work anywhere.
+* ✂️ **Whitespace Autocropping**: Trim margins automatically to export only the signature bounding box.
+* 💾 **Multiple Formats**: Export drawings as SVG (vector XML code), JPEG, standard PNG, or trimmed PNG.
+* 🎨 **Photoshop Studio UI**: Responsive, fullscreen, double-sidebar playground demo page.
+
+---
 
 ## Installation
 
-You can install `v-signature` via npm.
+Install `v-signature` via npm:
 
 ```bash
 npm install v-signature
 ```
 
+---
 
 ## Importing
 
-### For ES Modules
-
-If your project uses ES Modules, you can import `v-signature` into your JavaScript files.
+### ES Modules
 
 ```javascript
-import vSignature from 'v-signature';
-// ...
+import { VSignature } from 'v-signature';
 
-window.vSignature = vSignature;
+// make it globally accessible if needed
+window.VSignature = VSignature;
 ```
 
-
-### For CommonJS
-
-If your project uses CommonJS, you can require `v-signature` in your JavaScript files.
+### CommonJS
 
 ```javascript
-const vSignature = require('v-signature');
-// ...
-window.vSignature = vSignature;
+const { VSignature } = require('v-signature');
+
+window.VSignature = VSignature;
 ```
 
+---
 
-## Usage
+## Quick Start
 
-### Basic Usage
-
-1. **Create HTML Elements**
-
-    Make sure to have an HTML input element for storing the signature data and optionally buttons for clearing and saving.
-
-    ```html
-    <input type="hidden" class="signature">
-    ```
-
-
-2. **Initialize signature**
-
-    Initialize the `vSignature` class by specifying the selectors for the input, canvas, clear button, and save button. You can also provide options to configure the appearance and behavior of the signature canvas.
-
-    ```javascript
-    document.addEventListener('DOMContentLoaded', function() {
-        const signature = new vSignature('signature');
-    });
-    ```
-
-
-### Options
-
-You can customize the appearance and behavior of the signature canvas through the `options` parameter when initializing the `vSignature` class. This allows you to adjust properties such as width, height, color, line width, background color, border, and border radius.
-
-```javascript
-document.addEventListener('DOMContentLoaded', function() {
-    const signature = new vSignature('signature', {
-        // ...
-        options: {
-            width: '100%',
-            height: '300px',
-            color: '#000000',
-            lineWidth: 2,
-            backgroundColor: '#f2f2f2',
-            border: '1px dashed #b3b3b3',
-            borderRadius: '5px',
-        }
-    });
-});
-```
-
-
-### Manually Adding Canvas
-
-If you prefer to manually add a canvas element instead of using the default creation, you can provide a custom selector when initializing the `vSignature` class to get more customization abilities.
+Create a hidden input element to hold the signature base64 data stream:
 
 ```html
-<input type="hidden" class="signature">
-<canvas class="signature_pad"></canvas>
+<input type="hidden" id="signature-data" class="signature">
 ```
 
+Initialize `VSignature` in your script:
+
 ```javascript
-document.addEventListener('DOMContentLoaded', function() {
-    const signature = new vSignature('signature', {
-        canvas: 'signature_pad',
-        // ...
-        options: {
-            // ....
-        }
-    });
+document.addEventListener('DOMContentLoaded', () => {
+    // initialize using input selector
+    const signature = new VSignature('signature-data');
 });
 ```
 
+---
 
-### Providing Clear and Save Functionality
+## Configuration Options
 
-You can specify buttons for clearing and saving the signature. Ensure that these buttons exist in your HTML and are correctly selected when initializing the `vSignature` class. You can customize them as you wish.
-
-```html
-<input type="hidden" class="signature">
-<button class="signature_clear">Clear</button>
-<button class="signature_save">Save</button>
-```
+You can pass configuration parameters during initialization to style the canvas, change brush physics, add watermarks, and customize pointer icons:
 
 ```javascript
-document.addEventListener('DOMContentLoaded', function() {
-    const signature = new vSignature('signature', {
-        // ...
-        clear: 'signature_clear',
-        save: 'signature_save',
-        options: {
-            // ....
-        }
-    });
+const signature = new VSignature('signature-data', {
+    // structural elements
+    canvas: 'custom-canvas-id', // optional custom canvas element selector
+    clear: 'clear-btn-id',       // optional clear trigger selector
+    save: 'save-btn-id',         // optional save trigger selector
+    undo: 'undo-btn-id',         // optional undo trigger selector
+    redo: 'redo-btn-id',         // optional redo trigger selector
+
+    options: {
+        // canvas dimensions
+        width: '100%',
+        height: '350px',
+        backgroundColor: '#ffffff',
+        border: '1px dashed #cccccc',
+        borderRadius: '8px',
+        disabled: false,
+
+        // brush style preset
+        // options: 'fountain' | 'quill' | 'gel' | 'brush' | 'highlighter' | 'custom'
+        style: 'fountain',
+        color: '#000000',
+        lineWidth: 2,
+        lineJoin: 'round', // options: 'round' | 'bevel' | 'miter'
+        opacity: 1.0,
+
+        // custom physics (active when style is 'custom' or 'fountain')
+        minWidth: 0.5,
+        maxWidth: 3.0,
+        velocitySensitivity: 0.7,
+
+        // shadow blur / ink bleed
+        shadowBlur: 0,
+        shadowColor: null,
+
+        // cursor pointer styling
+        // options: 'crosshair' | 'fountain' | 'quill' | 'pencil' | custom image path
+        pen: 'crosshair',
+
+        // custom watermark layer
+        watermark: null, // watermark text string
+        watermarkColor: 'rgba(0, 0, 0, 0.05)',
+        watermarkFont: '32px sans-serif',
+        watermarkAngle: -30,
+
+        // guideline baseline layer
+        guideLine: null, // text description (e.g. "sign here") or true for line only
+        guideLineColor: 'rgba(0, 0, 0, 0.15)',
+        guideLineExport: false // set true to burn guideline into export files
+    }
 });
 ```
 
+---
 
-## Methods
+## Public Methods
 
-- **`on(event, callback)`**: Register an event listener for the `change` event, which is triggered when the signature data changes.
+- **`on(event, callback)`**: Register an event callback for canvas updates.
+  ```javascript
+  // listen to changes
+  signature.on('change', (data) => {
+      console.log('signature changed: ', data);
+  });
+  ```
 
-```javascript
-signature.on('change', (data) => {
-    console.log('Signature changed:', data);
-});
-```
+- **`isEmpty()`**: Returns `true` if the signature canvas is empty.
+  ```javascript
+  if (signature.isEmpty()) {
+      console.log('canvas is empty');
+  }
+  ```
 
+- **`disable()`**: Locks the signature pad to prevent drawing.
+  ```javascript
+  signature.disable();
+  ```
 
-- **`isEmpty()`**: Check if the canvas is empty. This method allows you to determine whether any signature has been drawn.
+- **`enable()`**: Unlocks the signature pad to allow drawing.
+  ```javascript
+  signature.enable();
+  ```
 
-```javascript
-if (signature.isEmpty()) {
-    console.log('Canvas is empty');
-}
-```
+- **`clear()`**: Wipes all strokes and resets the canvas state.
+  ```javascript
+  signature.clear();
+  ```
 
+- **`undo()`**: Undo the last drawn vector stroke.
+  ```javascript
+  signature.undo();
+  ```
 
-## Events
+- **`redo()`**: Redo the last undone vector stroke.
+  ```javascript
+  signature.redo();
+  ```
 
-- **`change`**: This event is fired when the signature changes and provides the data URL of the canvas image.
+- **`setPen(type)`**: Change the active cursor pointer style dynamically.
+  ```javascript
+  signature.setPen('quill');
+  ```
+
+- **`toPNG()`**: Trigger browser download of signature as standard PNG.
+  ```javascript
+  signature.toPNG();
+  ```
+
+- **`toJPEG()`**: Trigger browser download of signature as standard JPEG.
+  ```javascript
+  signature.toJPEG();
+  ```
+
+- **`toSVG()`**: Generate raw vector SVG XML code.
+  ```javascript
+  const svgMarkup = signature.toSVG();
+  ```
+
+- **`downloadSVG()`**: Trigger browser download of signature as vector SVG file.
+  ```javascript
+  signature.downloadSVG();
+  ```
+
+- **`toTrimmedPNG()`**: Computes stroke bounding box and returns cropped base64 PNG data URL (removes empty spacing).
+  ```javascript
+  const croppedData = signature.toTrimmedPNG();
+  ```
+
+- **`downloadTrimmed()`**: Trigger browser download of cropped/trimmed PNG file.
+  ```javascript
+  signature.downloadTrimmed();
+  ```
+
+- **`toData()`**: Export raw point vectors array.
+  ```javascript
+  const strokes = signature.toData();
+  ```
+
+- **`fromData(data)`**: Load and redraw signature from raw point vectors array.
+  ```javascript
+  signature.fromData(strokes);
+  ```
+
+---
 
 ## License
 
-MIT License. See the [LICENSE](https://github.com/SalekurPolas/v-signature/blob/master/LICENSE) file for more details.
-
-## Issues
-
-If you find a bug or have a feature request, please open an issue on [GitHub](https://github.com/SalekurPolas/v-signature/issues/new).
-
-
-## Acknowledgments
-
-- [jQuery UI Signature](http://keith-wood.name/signature.html) - Inspiration for the project.
-
-
-## Support
-
-If you like this project, please consider giving it a ⭐. Thanks for your support!
+MIT License. See the [LICENSE](https://github.com/SalekurPolas/v-signature/blob/master/LICENSE) file.
