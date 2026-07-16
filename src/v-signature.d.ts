@@ -86,8 +86,6 @@ declare class vSignature {
 
     constructor(input: string | HTMLElement, config?: vSignatureConfig);
 
-    init(): void;
-
     resize(): void;
 
     startDrawing(e: PointerEvent | MouseEvent): void;
@@ -143,5 +141,5 @@ declare class vSignature {
     isEmpty(): boolean;
 }
 
-export { vSignature as VSignature };
+export { vSignature, vSignature as VSignature };
 export default vSignature;

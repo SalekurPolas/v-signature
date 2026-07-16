@@ -4,7 +4,7 @@
 [![NPM Downloads](https://img.shields.io/npm/dm/v-signature.svg?style=flat-square)](https://www.npmjs.com/package/v-signature)
 [![License](https://img.shields.io/npm/l/v-signature.svg?style=flat-square)](https://github.com/SalekurPolas/v-signature/blob/master/LICENSE)
 
-> 🌐 **[Live Demo / Interactive Playground Studio](https://salekurpolas.github.io/vsignature)**
+> 🌐 **[Live Demo / Interactive Playground Studio](https://salekurpolas.github.io/v-signature)**
 
 `v-signature` is an ultra-lightweight, responsive HTML5 canvas signature pad library written in pure vanilla JavaScript. Capture smooth, high-fidelity digital signatures using dynamic calligraphy brush dynamics, custom text watermarks, baseline signing guidelines, and export them instantly to vector SVG, JPEG, PNG, or whitespace-trimmed signature images.
 
@@ -41,18 +41,18 @@ npm install v-signature
 ### ES Modules
 
 ```javascript
-import { VSignature } from 'v-signature';
+import { vSignature } from 'v-signature';
 
 // make it globally accessible if needed
-window.VSignature = VSignature;
+window.vSignature = vSignature;
 ```
 
 ### CommonJS
 
 ```javascript
-const { VSignature } = require('v-signature');
+const { vSignature } = require('v-signature');
 
-window.VSignature = VSignature;
+window.vSignature = vSignature;
 ```
 
 ---
@@ -65,12 +65,12 @@ Create a hidden input element to hold the signature base64 data stream:
 <input type="hidden" id="signature-data" class="signature">
 ```
 
-Initialize `VSignature` in your script:
+Initialize `vSignature` in your script:
 
 ```javascript
 document.addEventListener('DOMContentLoaded', () => {
     // initialize using input selector
-    const signature = new VSignature('signature-data');
+    const signature = new vSignature('signature-data');
 });
 ```
 
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
 You can pass configuration parameters during initialization to style the canvas, change brush physics, add watermarks, and customize pointer icons:
 
 ```javascript
-const signature = new VSignature('signature-data', {
+const signature = new vSignature('signature-data', {
     // structural elements
     canvas: 'custom-canvas-id', // optional custom canvas element selector
     clear: 'clear-btn-id',       // optional clear trigger selector
@@ -99,7 +99,7 @@ const signature = new VSignature('signature-data', {
         disabled: false,
 
         // brush style preset
-        // options: 'fountain' | 'quill' | 'gel' | 'brush' | 'highlighter' | 'custom'
+        // options: 'fountain' | 'pen' | 'quill' | 'feather' | 'calligraphy' | 'gel' | 'brush' | 'highlighter' | 'custom'
         style: 'fountain',
         color: '#000000',
         lineWidth: 2,
@@ -116,8 +116,8 @@ const signature = new VSignature('signature-data', {
         shadowColor: null,
 
         // cursor pointer styling
-        // options: 'crosshair' | 'fountain' | 'quill' | 'pencil' | custom image path
-        pen: 'crosshair',
+        // options: 'default' | 'pen' | 'feather' | 'pencil' | 'custom' | custom image path/URL string
+        pen: 'default',
 
         // custom watermark layer
         watermark: null, // watermark text string
@@ -182,42 +182,72 @@ const signature = new VSignature('signature-data', {
   signature.setPen('quill');
   ```
 
-- **`toPNG()`**: Trigger browser download of signature as standard PNG.
+- **`toPNG()`**: Returns base64 PNG data URL string containing the transparent signature.
   ```javascript
-  signature.toPNG();
+  const pngDataUrl = signature.toPNG();
   ```
 
-- **`toJPEG()`**: Trigger browser download of signature as standard JPEG.
+- **`downloadPNG()`**: Triggers browser file download of the transparent signature as a PNG file.
   ```javascript
-  signature.toJPEG();
+  signature.downloadPNG();
   ```
 
-- **`toSVG()`**: Generate raw vector SVG XML code.
+- **`toJPEG()`**: Returns base64 JPEG data URL string containing the signature on a solid white background.
+  ```javascript
+  const jpegDataUrl = signature.toJPEG();
+  ```
+
+- **`downloadJPEG()`**: Triggers browser file download of the signature as a solid white-background JPEG file.
+  ```javascript
+  signature.downloadJPEG();
+  ```
+
+- **`toSVG()`**: Generates and returns raw vector inline SVG XML markup string.
   ```javascript
   const svgMarkup = signature.toSVG();
   ```
 
-- **`downloadSVG()`**: Trigger browser download of signature as vector SVG file.
+- **`downloadSVG()`**: Triggers browser file download of the signature as a vector `.svg` file.
   ```javascript
   signature.downloadSVG();
   ```
 
-- **`toTrimmedPNG()`**: Computes stroke bounding box and returns cropped base64 PNG data URL (removes empty spacing).
+- **`toTrimmedPNG()`**: Automatically crops margins and returns base64 PNG data URL cropped directly to drawing bounds.
   ```javascript
-  const croppedData = signature.toTrimmedPNG();
+  const trimmedPngUrl = signature.toTrimmedPNG();
   ```
 
-- **`downloadTrimmed()`**: Trigger browser download of cropped/trimmed PNG file.
+- **`downloadTrimmedPNG()`**: Triggers browser file download of the cropped transparent signature as a PNG file.
   ```javascript
-  signature.downloadTrimmed();
+  signature.downloadTrimmedPNG();
   ```
 
-- **`toData()`**: Export raw point vectors array.
+- **`toTrimmedJPEG()`**: Automatically crops margins and returns base64 JPEG data URL cropped directly to drawing bounds on a white background.
+  ```javascript
+  const trimmedJpegUrl = signature.toTrimmedJPEG();
+  ```
+
+- **`downloadTrimmedJPEG()`**: Triggers browser file download of the cropped signature as a white-background JPEG file.
+  ```javascript
+  signature.downloadTrimmedJPEG();
+  ```
+
+- **`toTrimmedSVG()`**: Generates and returns cropped vector XML SVG markup string dynamically using viewBox coordinates.
+  ```javascript
+  const trimmedSvg = signature.toTrimmedSVG();
+  ```
+
+- **`downloadTrimmedSVG()`**: Triggers browser file download of the cropped signature as a vector `.svg` file.
+  ```javascript
+  signature.downloadTrimmedSVG();
+  ```
+
+- **`toData()`**: Exports raw array of stroke coordinates and speed dynamics.
   ```javascript
   const strokes = signature.toData();
   ```
 
-- **`fromData(data)`**: Load and redraw signature from raw point vectors array.
+- **`fromData(data)`**: Imports and renders raw coordinates onto the signature canvas.
   ```javascript
   signature.fromData(strokes);
   ```
