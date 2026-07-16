@@ -294,7 +294,7 @@
             <div class="logo-area">
                 <h1>vSignature Documentation</h1>
             </div>
-            <a href="/" class="back-to-sandbox">Playground</a>
+            <a href="./" class="back-to-sandbox">Playground</a>
         </header>
 
         <!-- Documentation Body -->
@@ -345,10 +345,10 @@
                     
                     <h3>Importing Options</h3>
                     <p>Import the ES Module class directly inside your script bundles:</p>
-                    <pre><code>import { VSignature } from 'v-signature';</code></pre>
+                    <pre><code>import { vSignature } from 'v-signature';</code></pre>
                     
                     <p>Or load using standard CommonJS modular requires:</p>
-                    <pre><code>const { VSignature } = require('v-signature');</code></pre>
+                    <pre><code>const { vSignature } = require('v-signature');</code></pre>
                 </section>
 
                 <!-- Quick Start -->
@@ -360,7 +360,7 @@
                     <p>Initialize the signature capture pad using Javascript:</p>
                     <pre><code>document.addEventListener('DOMContentLoaded', () => {
     // initialize by passing target input id
-    const signature = new VSignature('signature-data');
+    const signature = new vSignature('signature-data');
 });</code></pre>
                 </section>
 
@@ -369,7 +369,7 @@
                     <h2>Core Parameters</h2>
                     <p>You can customize the appearance, dimensions, and drawing behaviors by passing configuration parameters in the initialization options:</p>
                     
-                    <pre><code>const signature = new VSignature('signature-data', {
+                    <pre><code>const signature = new vSignature('signature-data', {
     options: {
         width: '100%',
         height: '350px',
@@ -457,20 +457,24 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><code>'fountain'</code></td>
+                                <td><code>'fountain'</code> / <code>'pen'</code></td>
                                 <td>velocity-sensitive line thickness mimicking an ink fountain pen.</td>
                             </tr>
                             <tr>
-                                <td><code>'quill'</code></td>
-                                <td>fading quill pen with dynamic width and trailing opacity fade-out.</td>
+                                <td><code>'quill'</code> / <code>'feather'</code></td>
+                                <td>fading quill pen with dynamic width and trailing opacity fade-out simulation.</td>
+                            </tr>
+                            <tr>
+                                <td><code>'calligraphy'</code></td>
+                                <td>dynamic calligraphy pen stroke physics.</td>
                             </tr>
                             <tr>
                                 <td><code>'gel'</code></td>
-                                <td>smooth, constant thickness ink line.</td>
+                                <td>smooth, constant thickness solid ink line.</td>
                             </tr>
                             <tr>
                                 <td><code>'brush'</code></td>
-                                <td>thick calligraphic brush texture with subtle ink-shadow blur values.</td>
+                                <td>thick calligraphic brush texture with subtle shadow blur.</td>
                             </tr>
                             <tr>
                                 <td><code>'highlighter'</code></td>
@@ -478,13 +482,13 @@
                             </tr>
                             <tr>
                                 <td><code>'custom'</code></td>
-                                <td>allows manual specification of minWidth, maxWidth, and sensitivity.</td>
+                                <td>allows manual specification of minWidth, maxWidth, and velocitySensitivity.</td>
                             </tr>
                         </tbody>
                     </table>
 
                     <h3>Custom Physics Config</h3>
-                    <pre><code>const signature = new VSignature('signature-data', {
+                    <pre><code>const signature = new vSignature('signature-data', {
     options: {
         style: 'custom',
         minWidth: 0.8,              // min thickness at high speeds
@@ -495,7 +499,7 @@
 
                     <h3>Custom Pen Cursor Example</h3>
                     <p>You can customize the mouse cursor shape by providing a custom image URL (such as an ornate green feather quill pen):</p>
-                    <pre><code>const signature = new VSignature('signature-data', {
+                    <pre><code>const signature = new vSignature('signature-data', {
     options: {
         pen: 'https://png.pngtree.com/png-clipart/20250419/original/pngtree-ornate-green-feather-quill-pen-with-gold-detailing-isolated-png-image_20738981.png'
     }
@@ -507,7 +511,7 @@
                     <h2>Watermarks & Guidelines</h2>
                     <p>Draw background aids and copyright watermarks directly onto the signature pad at the vector level:</p>
                     
-                    <pre><code>const signature = new VSignature('signature-data', {
+                    <pre><code>const signature = new vSignature('signature-data', {
     options: {
         // watermark settings
         watermark: 'OFFICIAL USE ONLY',
@@ -537,11 +541,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><code>init()</code></td>
-                                <td><code>void</code></td>
-                                <td>resolves canvas, buttons selectors, and binds pointer drawing event listeners.</td>
-                            </tr>
                             <tr>
                                 <td><code>resize()</code></td>
                                 <td><code>void</code></td>

@@ -1,5 +1,5 @@
 // test.js
-import { VSignature } from './src/v-signature.js';
+import { vSignature } from './src/v-signature.js';
 
 // mock dom APIs if running in standard headless Node environment
 if (typeof globalThis.window === 'undefined') {
@@ -35,7 +35,7 @@ if (typeof globalThis.window === 'undefined') {
 }
 
 // initialization of signature
-const signature = new VSignature('signature', {
+const signature = new vSignature('signature', {
     clear: 'clear',
     save: 'save',
     undo: 'undo',

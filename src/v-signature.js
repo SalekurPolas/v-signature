@@ -991,5 +991,5 @@ class vSignature {
 }
 
 const VSignature = vSignature;
-export { VSignature };
+export { VSignature, vSignature };
 export default vSignature;
