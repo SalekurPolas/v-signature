@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>vSignature - Modern Digital Signature Capture</title>
+    <title>vSignature - Capture Studio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,140 +12,782 @@
             --primary: #6366f1;
             --primary-hover: #4f46e5;
             --background: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
+            --sidebar-bg: #1e293b;
             --card-border: rgba(255, 255, 255, 0.08);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
+            --canvas-container-bg: #0b0f19;
         }
+
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
+
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             background-color: var(--background);
             color: var(--text-main);
-            margin: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        .photoshop-layout {
             display: flex;
-            align-content: center;
-            justify-content: center;
+            flex-direction: column; /* Top nav on top, body container below */
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        /* Top Options Bar - Spans Full Width */
+        .top-bar {
+            height: 48px;
+            min-height: 48px;
+            background-color: #1e293b;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
             align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+            padding: 0 16px;
+            gap: 12px;
+            overflow-x: auto;
+            white-space: nowrap;
+            width: 100vw;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+            z-index: 100;
         }
-        .container {
-            max-width: 700px;
-            width: 100%;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 16px;
-            padding: 32px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(12px);
+        
+        .top-bar::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
         }
-        h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin: 0 0 8px 0;
-            background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .subtitle {
-            color: var(--text-muted);
-            margin: 0 0 24px 0;
-            font-size: 15px;
-        }
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 16px;
-            margin-bottom: 24px;
-        }
-        button {
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+
+        .top-bar .tool-btn {
+            height: 32px;
+            padding: 0 12px;
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             color: var(--text-main);
-            padding: 10px 16px;
-            font-size: 13px;
-            font-weight: 500;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            user-select: none;
+            font-size: 11px;
+            font-weight: 500;
+            gap: 6px;
+            transition: all 0.2s ease;
         }
-        button:hover {
-            background-color: rgba(255, 255, 255, 0.12);
-            border-color: rgba(255, 255, 255, 0.2);
+
+        .top-bar .tool-btn svg {
+            color: var(--text-muted);
+        }
+
+        .top-bar .tool-btn:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
             transform: translateY(-1px);
         }
-        button:active {
+
+        .top-bar .tool-btn:active {
             transform: translateY(0);
         }
-        button.save {
+
+        .top-bar .tool-btn.save {
+            background-color: rgba(99, 102, 241, 0.15);
+            border-color: rgba(99, 102, 241, 0.3);
+            color: #a5b4fc;
+        }
+
+        .top-bar .tool-btn.save:hover {
             background-color: var(--primary);
+            color: #ffffff;
             border-color: transparent;
         }
-        button.save:hover {
-            background-color: var(--primary-hover);
+
+        .top-bar .tool-btn.save-trimmed {
+            background-color: rgba(5, 150, 105, 0.15);
+            border-color: rgba(5, 150, 105, 0.3);
+            color: #34d399;
         }
-        button.clear {
-            border-color: rgba(239, 68, 68, 0.4);
+
+        .top-bar .tool-btn.save-trimmed:hover {
+            background-color: #059669;
+            color: #ffffff;
+            border-color: transparent;
+        }
+
+        .top-bar .tool-btn.clear {
+            background-color: rgba(239, 68, 68, 0.08);
+            border-color: rgba(239, 68, 68, 0.2);
             color: #f87171;
         }
-        button.clear:hover {
-            background-color: rgba(239, 68, 68, 0.1);
-            border-color: #ef4444;
+
+        .top-bar .tool-btn.clear:hover {
+            background-color: #ef4444;
+            color: #ffffff;
+            border-color: transparent;
         }
-        .preview-box {
-            background-color: rgba(0, 0, 0, 0.2);
+
+        .top-bar .tool-btn.clear:hover svg {
+            color: #ffffff;
+        }
+
+        .top-bar .toolbox-checkbox {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .top-bar .toolbox-checkbox input[type="checkbox"] {
+            margin-right: 0;
+        }
+
+        .top-bar .toolbox-divider {
+            width: 1px;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.08);
+            display: inline-block;
+        }
+
+        /* Body container holding left settings and center canvas */
+        .main-body {
+            display: flex;
+            flex-grow: 1;
+            height: calc(100vh - 48px);
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        /* Left Settings Sidebar Styling - Sits Under Top Nav */
+        .left-sidebar {
+            width: 280px;
+            min-width: 280px;
+            background-color: #1e293b;
+            border-right: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            gap: 14px;
+            height: 100%;
+            overflow-y: auto;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+        
+        .left-sidebar::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        /* Panel Sections inside Left Sidebar */
+        .panel-section {
+            background-color: rgba(15, 23, 42, 0.4); /* darker card contrast */
             border: 1px solid var(--card-border);
             border-radius: 8px;
-            padding: 16px;
+            margin-bottom: 4px;
+            flex-shrink: 0; /* prevent layout engine from compressing card heights */
+            position: relative;
         }
-        .preview-title {
-            font-size: 12px;
+
+        .panel-header {
+            background-color: rgba(255, 255, 255, 0.01);
+            border-bottom: 1px solid var(--card-border);
+            padding: 8px 12px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--primary); /* Indigo headers for better section reading */
+            letter-spacing: 0.08em;
+            border-top-left-radius: 7px;
+            border-top-right-radius: 7px;
+        }
+
+        .panel-body {
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .config-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .config-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .config-group label {
+            font-size: 9px;
             font-weight: 600;
             color: var(--text-muted);
-            margin-bottom: 8px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
+
+        .config-group.checkbox-group {
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .config-group.checkbox-group label {
+            text-transform: none;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        input[type="checkbox"] {
+            cursor: pointer;
+            accent-color: var(--primary);
+            width: 14px;
+            height: 14px;
+            margin-right: 6px;
+        }
+
+        .left-sidebar input[type="text"], .left-sidebar select {
+            background-color: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            outline: none;
+            width: 100%;
+        }
+
+        .color-picker-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--card-border);
+            padding: 4px 8px;
+            border-radius: 4px;
+            width: 100%;
+            height: 28px;
+            box-sizing: border-box;
+        }
+
+        .left-sidebar input[type="color"] {
+            width: 20px;
+            height: 16px;
+            border-radius: 2px;
+            padding: 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: none;
+            cursor: pointer;
+        }
+
+        .color-value, .bg-value, .shadow-color-value, .watermark-color-value, .guide-color-value {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-family: monospace;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .left-sidebar input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .preview-box {
+            background-color: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            padding: 8px 10px;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            margin-top: auto;
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0; /* prevent layout engine from compressing preview box height */
+        }
+
+        .copy-btn:hover {
+            color: var(--text-main) !important;
+            transform: scale(1.1);
+        }
+
+        .preview-title {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
         .data-preview {
             font-family: monospace;
-            font-size: 11px;
+            font-size: 9px;
             color: #34d399;
             word-break: break-all;
             white-space: pre-wrap;
-            max-height: 80px;
             overflow-y: auto;
-            margin: 0;
+            flex-grow: 1;
+            max-height: 40px;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+        
+        .data-preview::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        /* Tooltip Trigger & Popup */
+        .info-trigger {
+            position: relative;
+            cursor: help;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            margin-left: 4px;
+            vertical-align: middle;
+            transition: color 0.2s ease;
+        }
+
+        .info-trigger:hover {
+            color: var(--primary);
+        }
+
+        .info-trigger::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 130%;
+            left: -12px;
+            transform: translateY(4px);
+            background-color: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: none; /* overrides label caps */
+            letter-spacing: normal;
+            white-space: normal;
+            width: 170px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            line-height: 1.4;
+            text-align: left;
+        }
+
+        .info-trigger::before {
+            content: "";
+            position: absolute;
+            bottom: 115%;
+            left: 2px;
+            transform: translateY(4px);
+            border-width: 5px;
+            border-style: solid;
+            border-color: rgba(15, 23, 42, 0.95) transparent transparent transparent;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 9999;
+        }
+
+        .info-trigger:hover::after,
+        .info-trigger:hover::before {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Right Aligned Tooltip (for right column controls) */
+        .info-trigger.tooltip-right::after {
+            right: -12px;
+            left: auto;
+        }
+        .info-trigger.tooltip-right::before {
+            right: 2px;
+            left: auto;
+        }
+
+        /* Downward Tooltip (for top row controls to prevent top-edge cropping) */
+        .info-trigger.tooltip-down::after {
+            bottom: auto;
+            top: 130%;
+            transform: translateY(-4px);
+        }
+        .info-trigger.tooltip-down::before {
+            bottom: auto;
+            top: 115%;
+            border-color: transparent transparent rgba(15, 23, 42, 0.95) transparent;
+            transform: translateY(-4px);
+        }
+        .info-trigger.tooltip-down:hover::after,
+        .info-trigger.tooltip-down:hover::before {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Canvas Area Styling */
+        .canvas-area {
+            flex-grow: 1;
+            background-color: var(--canvas-container-bg);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .canvas-container {
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Mobile Responsive Adjustments */
+        @media (max-width: 900px) {
+            .main-body {
+                flex-direction: column;
+            }
+            .left-sidebar {
+                width: 100%;
+                min-width: 100%;
+                height: 55%;
+                border-right: none;
+                border-bottom: 1px solid var(--card-border);
+                overflow-y: auto;
+            }
+            .canvas-area {
+                width: 100%;
+                height: 45%;
+                padding: 12px;
+            }
+            .top-bar {
+                flex-wrap: nowrap;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>vSignature</h1>
-        <div class="subtitle">Interactive modern virtual signature playground. Draw with your mouse, finger, or stylus.</div>
-        
-        <input type="hidden" class="signature">
-        
-        <div class="controls">
-            <button class="undo">Undo</button>
-            <button class="redo">Redo</button>
-            <button class="clear">Clear</button>
-            <button class="save">PNG</button>
-            <button class="save-jpg">JPEG</button>
-            <button class="save-svg">SVG</button>
-        </div>
+    <div class="photoshop-layout">
+        <!-- Top Actions Toolbar (Spans Full Width on Top) -->
+        <header class="top-bar">
+            <div class="brand" style="width: 248px; margin-right: 16px; display: flex; flex-direction: column; flex-shrink: 0;">
+                <h1 style="font-size: 14px; font-weight: 700; background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.2; margin-right: 0;">vSignature Studio</h1>
+                <div style="font-size: 8px; color: var(--text-muted); line-height: 1.2;">Premium Capture Sandbox</div>
+            </div>
+            
+            <div class="toolbox-divider"></div>
 
-        <div class="preview-box">
-            <div class="preview-title">Real-time Data Output</div>
-            <pre class="data-preview">No signature data...</pre>
+            <button class="tool-btn undo" title="Undo Last Stroke">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-corner-up-left" viewBox="0 0 24 24">
+                    <polyline points="9 14 4 9 9 4"></polyline>
+                    <path d="M20 20v-7a4 4 0 0 0-4-4H4"></path>
+                </svg>
+                <span>Undo</span>
+            </button>
+            <button class="tool-btn redo" title="Redo Last Stroke">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-corner-up-right" viewBox="0 0 24 24">
+                    <polyline points="15 14 20 9 15 4"></polyline>
+                    <path d="M4 20v-7a4 4 0 0 1 4-4h12"></path>
+                </svg>
+                <span>Redo</span>
+            </button>
+            <button class="tool-btn clear" title="Clear Canvas drawing area">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2" viewBox="0 0 24 24">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+                <span>Clear</span>
+            </button>
+            
+            <div class="toolbox-checkbox" title="Lock the canvas signature pad to disable drawing updates" style="margin-left: 4px;">
+                <input type="checkbox" class="disable-checkbox" id="disable-pad">
+                <label for="disable-pad">Lock Canvas</label>
+            </div>
+            
+            <div class="toolbox-divider"></div>
+            
+            <button class="tool-btn save-trimmed" title="Save signature cropped to borders">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download" viewBox="0 0 24 24">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Trimmed PNG</span>
+            </button>
+            <button class="tool-btn save" title="Save signature as standard PNG">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download" viewBox="0 0 24 24">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>PNG</span>
+            </button>
+            <button class="tool-btn save-jpg" title="Save signature as JPEG">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download" viewBox="0 0 24 24">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>JPEG</span>
+            </button>
+            <button class="tool-btn save-svg" title="Save signature as vector SVG">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download" viewBox="0 0 24 24">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>SVG</span>
+            </button>
+            
+            <div class="toolbox-divider"></div>
+
+            <a href="docs.html" target="_blank" class="tool-btn docs" title="Open API Documentation reference guide" style="text-decoration: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book" viewBox="0 0 24 24">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                </svg>
+                <span>Docs Reference</span>
+            </a>
+        </header>
+
+        <!-- Main Body Area Sits Under Top Nav -->
+        <div class="main-body">
+            <!-- Left Settings Sidebar -->
+            <aside class="left-sidebar">
+                <!-- Pen Settings Card -->
+                <div class="panel-section">
+                    <div class="panel-header">Pen Settings</div>
+                    <div class="panel-body">
+                        <div class="config-group">
+                            <label for="pen-cursor">Pen Style<span class="info-trigger tooltip-down" data-tooltip="Personalize the pointer shape when hovering or drawing on the signature pad"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></label>
+                            <select class="cursor-selector" id="pen-cursor">
+                                <option value="default">Default</option>
+                                <option value="pen">Pen</option>
+                                <option value="feather">Feather</option>
+                                <option value="pencil">Pencil</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
+                        <div class="config-group cursor-path-group" style="display: none;">
+                            <label for="cursor-path">Custom Image URL<span class="info-trigger tooltip-down tooltip-right" data-tooltip="Specify a custom image file path or URL to use as the mouse cursor"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></label>
+                            <input type="text" class="cursor-path-input" id="cursor-path" placeholder="e.g. assets/pen.png">
+                        </div>
+
+                        <div class="config-row">
+                            <div class="config-group">
+                                <label for="pen">Style Preset<span class="info-trigger" data-tooltip="Choose drawing instrument physics (e.g. pen, gel, brush, feather, highlighter, calligraphy)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></label>
+                                <select class="pen-style-selector" id="pen">
+                                    <option value="pen">Pen</option>
+                                    <option value="gel">Gel Pen</option>
+                                    <option value="brush">Brush</option>
+                                    <option value="feather">Feather</option>
+                                    <option value="highlighter">Highlighter</option>
+                                    <option value="calligraphy">Calligraphy</option>
+                                </select>
+                            </div>
+                            <div class="config-group">
+                                <label for="line-join">Line Join<span class="info-trigger tooltip-right" data-tooltip="Specifies the canvas line segment corner style (round, bevel, or sharp miter)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></label>
+                                <select class="join-selector" id="line-join">
+                                    <option value="round">Round</option>
+                                    <option value="miter">Miter</option>
+                                    <option value="bevel">Bevel</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="config-group">
+                            <label for="pen-color">Pen Color<span class="info-trigger" data-tooltip="Sets the stroke drawing hex color"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" class="color-picker" id="pen-color" value="#000000">
+                                <span class="color-value">#000000</span>
+                            </div>
+                        </div>
+                        <div class="config-group">
+                            <label for="bg-color">Canvas BG<span class="info-trigger tooltip-right" data-tooltip="Sets the canvas background fill color"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" class="bg-picker" id="bg-color" value="#ffffff">
+                                <span class="bg-value">#FFFFFF</span>
+                            </div>
+                        </div>
+
+                        <div class="config-group">
+                            <label for="pen-width" class="slider-label">
+                                <span>Thickness<span class="info-trigger" data-tooltip="Controls base stroke line width in pixels"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></span>
+                                <span class="width-value">2px</span>
+                            </label>
+                            <input type="range" class="width-slider" id="pen-width" min="1" max="10" value="2">
+                        </div>
+
+                        <div class="config-group">
+                            <label for="opacity" class="slider-label">
+                                <span>Opacity<span class="info-trigger" data-tooltip="Sets the ink transparency level (0.1 to 1.0)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></span>
+                                <span class="opacity-value">1.00</span>
+                            </label>
+                            <input type="range" class="opacity-slider" id="opacity" min="0.1" max="1.0" step="0.05" value="1.0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Watermark Layer -->
+                <div class="panel-section">
+                    <div class="panel-header">Watermark Options</div>
+                    <div class="panel-body">
+                        <div class="config-group">
+                            <label for="watermark">Watermark Text<span class="info-trigger" data-tooltip="Rotated semi-transparent text printed directly behind the signature"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></label>
+                            <input type="text" class="watermark-input" id="watermark" value="SAMPLE">
+                        </div>
+                        <div class="config-group">
+                            <label for="watermark-color">Watermark Color<span class="info-trigger" data-tooltip="Adjust transparency or hue of the background watermark"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" class="watermark-color-picker" id="watermark-color" value="#000000">
+                                <span class="watermark-color-value">#000000</span>
+                            </div>
+                        </div>
+                        <div class="config-group">
+                            <label for="watermark-size" class="slider-label">
+                                <span>Font Size<span class="info-trigger" data-tooltip="Sets the watermark text dimensions"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></span>
+                                <span class="watermark-size-value">32px</span>
+                            </label>
+                            <input type="range" class="watermark-size-slider" id="watermark-size" min="12" max="64" value="32">
+                        </div>
+                        <div class="config-group">
+                            <label for="watermark-angle" class="slider-label">
+                                <span>Angle<span class="info-trigger" data-tooltip="Sets the watermark rotation angle in degrees"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></span>
+                                <span class="watermark-angle-value">-30°</span>
+                            </label>
+                            <input type="range" class="watermark-angle-slider" id="watermark-angle" min="-90" max="90" value="-30">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guidelines Layer -->
+                <div class="panel-section">
+                    <div class="panel-header">Guideline Baseline</div>
+                    <div class="panel-body">
+                        <div class="config-group">
+                            <label for="guide-text">Guideline Title<span class="info-trigger" data-tooltip="Sets the baseline text helper (e.g. 'sign here')"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></label>
+                            <input type="text" class="guide-text" id="guide-text" value="Sign here">
+                        </div>
+                        <div class="config-group">
+                            <label for="guide-color">Line Color<span class="info-trigger" data-tooltip="Sets the baseline guide stroke color"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" class="guide-color-picker" id="guide-color" value="#000000">
+                                <span class="guide-color-value">#000000</span>
+                            </div>
+                        </div>
+                        <div class="config-row" style="margin-top: 6px;">
+                            <div class="config-group checkbox-group">
+                                <input type="checkbox" class="guide-checkbox" id="guide" checked>
+                                <label for="guide">Enable<span class="info-trigger" data-tooltip="Toggles visual guide line on canvas"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></label>
+                            </div>
+                            <div class="config-group checkbox-group">
+                                <input type="checkbox" class="guide-export-checkbox" id="guide-export">
+                                <label for="guide-export">Export<span class="info-trigger tooltip-right" data-tooltip="Burn guideline into exported images if enabled"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Preset Physics options -->
+                <div class="panel-section physics-section">
+                    <div class="panel-header">Dynamic Physics</div>
+                    <div class="panel-body">
+                        <div class="config-group">
+                            <label for="min-width" class="slider-label">
+                                <span>Min Width<span class="info-trigger" data-tooltip="Minimum line thickness when drawing at fast speeds"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></span>
+                                <span class="min-width-value">0.5px</span>
+                            </label>
+                            <input type="range" class="min-width-slider" id="min-width" min="0.1" max="5" step="0.1" value="0.5">
+                        </div>
+                        <div class="config-group">
+                            <label for="max-width" class="slider-label">
+                                <span>Max Width<span class="info-trigger" data-tooltip="Maximum line thickness when drawing at slow speeds"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></span>
+                                <span class="max-width-value">3.0px</span>
+                            </label>
+                            <input type="range" class="max-width-slider" id="max-width" min="1" max="15" step="0.2" value="3.0">
+                        </div>
+                        <div class="config-group">
+                            <label for="speed-sensitivity" class="slider-label">
+                                <span>Sensitivity<span class="info-trigger" data-tooltip="Speed variation intensity (physics calculation factor)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></span>
+                                <span class="speed-value">0.70</span>
+                            </label>
+                            <input type="range" class="speed-slider" id="speed-sensitivity" min="0.1" max="2.0" step="0.05" value="0.7">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shadows settings -->
+                <div class="panel-section">
+                    <div class="panel-header">Shadow & Bleed</div>
+                    <div class="panel-body">
+                        <div class="config-row">
+                            <div class="config-group">
+                                <label for="shadow-color">Color<span class="info-trigger" data-tooltip="Drop shadow hex color for ink bleed effects"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></label>
+                                <div class="color-picker-wrapper">
+                                    <input type="color" class="shadow-color-picker" id="shadow-color" value="#000000">
+                                    <span class="shadow-color-value">#000000</span>
+                                </div>
+                            </div>
+                            <div class="config-group">
+                                <label for="shadow-blur" class="slider-label">
+                                    <span>Blur<span class="info-trigger tooltip-right" data-tooltip="Blur radius of drawing shadow (0 to disable)"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></span>
+                                    <span class="shadow-blur-value">0px</span>
+                                </label>
+                                <input type="range" class="shadow-blur-slider" id="shadow-blur" min="0" max="10" value="0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data output box -->
+                <div class="preview-box">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; z-index: 10;">
+                        <div class="preview-title" style="margin-bottom: 0;">Real-time Data Output<span class="info-trigger" data-tooltip="Shows raw base64 data stream captured on canvas"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></div>
+                        <button class="copy-btn" title="Copy to clipboard" style="background: none; border: none; padding: 2px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; transition: all 0.2s ease;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <pre class="data-preview">No signature data...</pre>
+                </div>
+            </aside>
+
+            <!-- Center Drawing Canvas Workspace -->
+            <main class="canvas-area">
+                <div class="canvas-container">
+                    <input type="hidden" class="signature">
+                </div>
+            </main>
         </div>
     </div>
 

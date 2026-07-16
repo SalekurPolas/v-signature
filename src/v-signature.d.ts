@@ -8,9 +8,29 @@ interface vSignatureOptions {
     border?: string;
     borderRadius?: string;
     disabled?: boolean;
-    minWidth?: number;
-    maxWidth?: number;
-    velocitySensitivity?: number;
+    
+    style?: 'pen' | 'fountain' | 'quill' | 'feather' | 'gel' | 'brush' | 'highlighter' | 'calligraphy' | 'custom';
+    minWidth?: number | null;
+    maxWidth?: number | null;
+    velocitySensitivity?: number | null;
+    opacity?: number;
+    shadowBlur?: number;
+    shadowColor?: string | null;
+    lineJoin?: 'round' | 'bevel' | 'miter';
+
+    // watermark options
+    watermark?: string | null;
+    watermarkColor?: string;
+    watermarkFont?: string;
+    watermarkAngle?: number;
+
+    // guideline baseline options
+    guideLine?: string | null;
+    guideLineColor?: string;
+    guideLineExport?: boolean;
+
+    // cursor pointer options
+    pen?: 'default' | 'crosshair' | 'pen' | 'fountain' | 'quill' | 'feather' | 'pencil' | 'custom' | string;
 }
 
 interface vSignatureConfig {
@@ -30,6 +50,10 @@ interface Point {
     y: number;
     time?: number;
     width?: number;
+    opacity?: number;
+    shadowBlur?: number;
+    shadowColor?: string | null;
+    lineJoin?: string;
 }
 
 declare class vSignature {
@@ -76,19 +100,37 @@ declare class vSignature {
 
     resumeDrawing(e: PointerEvent | MouseEvent): void;
 
-    clearCanvas(): void;
+    clear(): void;
 
-    toPNG(): void;
+    toPNG(): string;
 
-    toJPEG(): void;
+    downloadPNG(): void;
+
+    toJPEG(): string;
+
+    downloadJPEG(): void;
 
     toSVG(): string;
 
     downloadSVG(): void;
 
+    toTrimmedPNG(): string | null;
+
+    downloadTrimmedPNG(): void;
+
+    toTrimmedJPEG(): string | null;
+
+    downloadTrimmedJPEG(): void;
+
+    toTrimmedSVG(): string | null;
+
+    downloadTrimmedSVG(): void;
+
     toData(): Point[][];
 
     fromData(data: Point[][]): void;
+
+    setPen(type: 'default' | 'crosshair' | 'pen' | 'fountain' | 'quill' | 'feather' | 'pencil' | 'custom' | string): void;
 
     disable(): void;
 
