@@ -41,7 +41,7 @@ npm install v-signature
 ### ES Modules
 
 ```javascript
-import { vSignature } from 'v-signature';
+import vSignature from 'v-signature';
 
 // make it globally accessible if needed
 window.vSignature = vSignature;
@@ -50,7 +50,7 @@ window.vSignature = vSignature;
 ### CommonJS
 
 ```javascript
-const { vSignature } = require('v-signature');
+const vSignature = require('v-signature');
 
 window.vSignature = vSignature;
 ```
