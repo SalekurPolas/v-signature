@@ -138,6 +138,8 @@ declare class vSignature {
 
     on(event: 'change', callback: (data: string | null) => void): void;
 
+    destroy(): void;
+
     isEmpty(): boolean;
 }
 

@@ -66,6 +66,8 @@ class vSignature {
         this.undoButton = null;
         this.redoButton = null;
         this.onChange = null;
+        this.resizeObserver = null;
+        this._windowResizeHandler = null;
     
         this.isDrawing = false;
         this.lastX = 0;
@@ -169,7 +171,20 @@ class vSignature {
 
         // setup window resize listener to keep layout crisp and redraw strokes dynamically
         if (typeof window !== 'undefined') {
-            window.addEventListener('resize', () => this.resize());
+            this._windowResizeHandler = () => this.resize();
+            window.addEventListener('resize', this._windowResizeHandler);
+        }
+
+        // setup ResizeObserver to detect when container or modal becomes visible or resizes
+        if (typeof ResizeObserver !== 'undefined' && this.canvasElement) {
+            this.resizeObserver = new ResizeObserver((entries) => {
+                for (const entry of entries) {
+                    if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
+                        this.resize();
+                    }
+                }
+            });
+            this.resizeObserver.observe(this.canvasElement);
         }
 
         this._updateCursor();
@@ -180,9 +195,30 @@ class vSignature {
 
         const rect = this.canvasElement.getBoundingClientRect();
         
+        // If element is hidden (e.g. inside an unopened modal/tabs), abort to avoid corrupting dimensions
+        if (rect.width === 0 && rect.height === 0) {
+            return;
+        }
+
         // prevent layout calculation issues if element is hidden initially (modal)
-        const width = rect.width || parseFloat(this.options.width) || 300;
-        const height = rect.height || parseFloat(this.options.height) || 150;
+        let width = rect.width;
+        if (!width) {
+            if (typeof this.options.width === 'string' && this.options.width.endsWith('%')) {
+                width = this.canvasElement.parentElement?.clientWidth || 300;
+            } else {
+                width = parseFloat(this.options.width) || 300;
+            }
+        }
+
+        let height = rect.height;
+        if (!height) {
+            if (typeof this.options.height === 'string' && this.options.height.endsWith('%')) {
+                height = this.canvasElement.parentElement?.clientHeight || 150;
+            } else {
+                height = parseFloat(this.options.height) || 150;
+            }
+        }
+
         const ratio = (typeof window !== 'undefined' && window.devicePixelRatio) || 1;
         
         // only update if dimensions actually changed (avoid clearing canvas on unnecessary resizing)
@@ -198,9 +234,20 @@ class vSignature {
 
     pos(e) {
         const rect = this.canvasElement.getBoundingClientRect();
-        // since we scale the context using ratios, we map coordinates relative to the CSS display box
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        if (rect.width === 0 || rect.height === 0) {
+            return { x: 0, y: 0 };
+        }
+
+        // Map pointer coordinates accurately even if display size differs from internal canvas resolution
+        const ratio = (typeof window !== 'undefined' && window.devicePixelRatio) || 1;
+        const logicalWidth = this.canvasElement.width / ratio;
+        const logicalHeight = this.canvasElement.height / ratio;
+
+        const scaleX = logicalWidth / rect.width;
+        const scaleY = logicalHeight / rect.height;
+
+        const x = (e.clientX - rect.left) * scaleX;
+        const y = (e.clientY - rect.top) * scaleY;
         return { x, y };
     }
 
@@ -273,6 +320,10 @@ class vSignature {
 
     startDrawing(e) {
         if (this.options.disabled) return;
+        
+        // Ensure canvas dimensions match container layout before first point is captured
+        this.resize();
+
         this.isDrawing = true;
         
         // capture pointer events (crucial for smooth drawing outside boundaries)
@@ -983,6 +1034,18 @@ class vSignature {
     setPen(type) {
         this.options.pen = type;
         this._updateCursor();
+    }
+
+    destroy() {
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect();
+            this.resizeObserver = null;
+        }
+
+        if (this._windowResizeHandler && typeof window !== 'undefined') {
+            window.removeEventListener('resize', this._windowResizeHandler);
+            this._windowResizeHandler = null;
+        }
     }
 
     isEmpty() {
